@@ -123,15 +123,16 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 	})
 	conn.AddCallback("JOIN", func(e *irc.Event) {
 		if e.Nick == config.BotNick {
-			conn.Privmsg(config.Channel, "Hello everybody, I'm a bot")
+			//conn.Privmsg(config.Channel, "")
+			fmt.Printf("Joined\n")
 		}
 	})
 
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
 		var response string
 
-		if strings.Contains(e.Message, "!") && strings.Index(e.Message, "!") == 0 {
-			// This is a command, parse it.
+		if strings.Contains(e.Message, "!meriacas") && strings.Index(e.Message, "!meriacas") == 0 {
+			// This is intentionally borken. Further functions will follow
 			response = ParseCmds(e.Message)
 		}
 
@@ -144,6 +145,8 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		}
 		if len(e.Message) > 0 {
 			ChannelLogger(config.LogDir + e.Arguments[0], e.Nick, e.Message)
+			//This parses only messages when only someone talks
+			//It does not parse events, nor other.events()
 		}
 	})
 }
