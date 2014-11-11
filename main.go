@@ -136,9 +136,9 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			response = ParseCmds(e.Message)
 		}
 
-		if strings.Contains(e.Message, "http") || strings.Contains(e.Message, "www") {
+		/* if strings.Contains(e.Message, "http") || strings.Contains(e.Message, "www") {
 			response = UrlTitle(e.Message)
-		}
+		} */
 
 		if len(response) > 0 {
 			conn.Privmsg(config.Channel, response)
