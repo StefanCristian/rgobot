@@ -15,7 +15,7 @@ GoBot
 ```
     $ mkdir -p $GOPATH/src/github.com/blacknoxis
     $ cd $GOPATH/src/github.com/blacknoxis
-    $ git clone git@github.com:blacknoxis/gobot.git
+    $ git clone https://github.com/BlackNoxis/rgobot.git
     $ cd gobot
 ```
 
