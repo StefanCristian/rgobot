@@ -134,7 +134,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		var response string
 		message := e.Message()
 
-		if strings.Contains(message, "#meriacas") && strings.Index(message, "#meriacas") == 0 {
+		if e.Host == "unaffiliated/blacknoxis" && strings.Contains(message, "#meriacas") && strings.Index(message, "#meriacas") == 0 {
 			// This is intentionally borken. Further functions will follow
 			response = ParseCmds(message)
 		}
