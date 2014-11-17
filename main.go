@@ -101,14 +101,14 @@ func UrlTitle(msg string) string {
 }
 
 func ChannelLogger(Log string, UserNick string, message string) {
-	STime := time.Now().UTC().Format(time.ANSIC)
+	STime := time.Now().Format(time.ANSIC)
 
-	f, err := os.OpenFile(Log + ".log", os.O_RDWR|os.O_APPEND, 0666)
+	f, err := os.OpenFile(Log + ".log", os.O_RDWR|os.O_APPEND|os.O_SYNC, 0666)
 	if err != nil {
 		fmt.Println(f, err)
 	}
 
-	n, err := io.WriteString(f, STime + " > " + UserNick + ": " + message + "\n")
+	n, err := io.WriteString(f, STime + " > " + UserNick + message + "\n")
 	if err != nil {
 		fmt.Println(n, err)
 	}
@@ -126,14 +126,17 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			//conn.Privmsg(config.Channel, "")
 			fmt.Printf("Joined\n")
 		}
+		message := " has joined"
+		ChannelLogger(config.LogDir + e.Arguments[0], e.Nick, message)
 	})
 
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
 		var response string
+		message := e.Message()
 
-		if strings.Contains(e.Message, "!meriacas") && strings.Index(e.Message, "!meriacas") == 0 {
+		if strings.Contains(message, "#meriacas") && strings.Index(message, "#meriacas") == 0 {
 			// This is intentionally borken. Further functions will follow
-			response = ParseCmds(e.Message)
+			response = ParseCmds(message)
 		}
 
 		/* if strings.Contains(e.Message, "http") || strings.Contains(e.Message, "www") {
@@ -143,8 +146,8 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		if len(response) > 0 {
 			conn.Privmsg(config.Channel, response)
 		}
-		if len(e.Message) > 0 {
-			ChannelLogger(config.LogDir + e.Arguments[0], e.Nick, e.Message)
+		if len(message) > 0 {
+			ChannelLogger(config.LogDir + e.Arguments[0], e.Nick + ": ", message)
 			//This parses only messages when only someone talks
 			//It does not parse events, nor other.events()
 		}
