@@ -62,7 +62,7 @@ func LogDir(CreateDir string) {
 
         //Check if the LogDir Exists. And if not Create it.
         if _, err := os.Stat(CreateDir); os.IsNotExist(err) {
-                fmt.Printf("no such file or directory: %s", CreateDir)
+                fmt.Printf("No such file or directory: %s", CreateDir)
                 os.Mkdir(CreateDir, 0777)
         } else {
                 fmt.Printf("Its There: %s", CreateDir)
@@ -72,11 +72,9 @@ func LogDir(CreateDir string) {
 func LogFile(CreateFile string) {
         //Check if the Log File for the Channel(s) Exists if not create it
         if _, err := os.Stat(CreateFile + ".log"); os.IsNotExist(err) {
-                fmt.Printf("Log File " + CreateFile + ".log Doesn't Exist. Creating Log File.")
-                os.Create( CreateFile + ".log")
-                fmt.Printf("Log File " + CreateFile + ".log Created.")
+                fmt.Printf("Log File " + CreateFile + ".log Doesn't Exist.\n")
         } else {
-                fmt.Printf("Log File Exists.")
+                fmt.Printf("Log File Exists.\n")
         }
 }
 
@@ -126,7 +124,7 @@ func UrlTitle(msg string) string {
 func ChannelLogger(Log string, UserNick string, message string) {
 	STime := time.Now().Format(time.ANSIC)
 
-	f, err := os.OpenFile(Log + ".log", os.O_RDWR|os.O_APPEND|os.O_SYNC, 0666)
+	f, err := os.OpenFile(Log + ".log", os.O_CREATE|os.O_RDWR|os.O_APPEND|os.O_SYNC, 0666)
 	if err != nil {
 		fmt.Println(f, err)
 	}
@@ -147,12 +145,10 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 	})
 	conn.AddCallback("JOIN", func(e *irc.Event) {
 		if e.Nick == config.BotNick {
-			//conn.Privmsg(config.Channel, "")
 			fmt.Printf("Joined\n")
+			LogDir(config.LogDir)
 		}
 		message := " has joined"
-		LogDir(config.LogDir)
-		LogFile(config.LogDir + location) //although not convetionally-wise, this may save asses.
 		ChannelLogger(config.LogDir + location, e.Nick, message)
 	})
 
@@ -172,11 +168,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		if len(response) > 0 {
 			conn.Privmsg(config.Channel, response)
 		}
-		if len(message) > 0 {
-			ChannelLogger(config.LogDir + location, e.Nick + ": ", message)
-			//This parses only messages when only someone talks
-			//It does not parse events, nor other.events()
-		}
+		ChannelLogger(config.LogDir + location, e.Nick + ": ", message)
 	})
 }
 
