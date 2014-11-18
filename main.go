@@ -149,7 +149,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			fmt.Printf("Joined\n")
 			dateLog := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
 			LogDir(config.LogDir)
-			LogFile(dateLog)
+			LogFile(config.LogDir+dateLog)
 		}
 		message := " has joined"
 		dateLog := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
