@@ -73,6 +73,8 @@ func LogFile(CreateFile string) {
         //Check if the Log File for the Channel(s) Exists if not create it
         if _, err := os.Stat(CreateFile + ".log"); os.IsNotExist(err) {
                 fmt.Printf("Log File " + CreateFile + ".log Doesn't Exist.\n")
+		os.Create(CreateFile + ".log")
+		fmt.Printf("Created the log file\n")
         } else {
                 fmt.Printf("Log File Exists.\n")
         }
@@ -139,20 +141,24 @@ func ChannelLogger(Log string, UserNick string, message string) {
 // AddCallbacks is a single function that does what it says.
 // It's merely a way of decluttering the main function.
 func AddCallbacks(conn *irc.Connection, config *Config) {
-	location := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year()) //didn't know for sure where to put it
 	conn.AddCallback("001", func(e *irc.Event) {
 		conn.Join(config.Channel)
 	})
 	conn.AddCallback("JOIN", func(e *irc.Event) {
 		if e.Nick == config.BotNick {
 			fmt.Printf("Joined\n")
+			dateLog := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
 			LogDir(config.LogDir)
+			LogFile(dateLog)
 		}
 		message := " has joined"
-		ChannelLogger(config.LogDir + location, e.Nick, message)
+		dateLog := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
+		ChannelLogger(config.LogDir + dateLog, e.Nick, message)
 	})
 
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
+		dateLog := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
+		fmt.Println(dateLog)
 		var response string
 		message := e.Message()
 
@@ -168,7 +174,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		if len(response) > 0 {
 			conn.Privmsg(config.Channel, response)
 		}
-		ChannelLogger(config.LogDir + location, e.Nick + ": ", message)
+		ChannelLogger(config.LogDir + dateLog, e.Nick + ": ", message)
 	})
 }
 
