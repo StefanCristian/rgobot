@@ -35,6 +35,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	// "strconv"
 )
 
 type Config struct {
@@ -55,6 +56,28 @@ func ParseCmds(cmdMsg string) string {
 	//     "!slap $USER"
 	msg := fmt.Sprintf("\x01"+"ACTION %v %v, FOR SCIENCE!\x01", cmd, msgArray[1])
 	return msg
+}
+// Creates Log Directory
+func LogDir(CreateDir string) {
+
+        //Check if the LogDir Exists. And if not Create it.
+        if _, err := os.Stat(CreateDir); os.IsNotExist(err) {
+                fmt.Printf("no such file or directory: %s", CreateDir)
+                os.Mkdir(CreateDir, 0777)
+        } else {
+                fmt.Printf("Its There: %s", CreateDir)
+        }
+}
+
+func LogFile(CreateFile string) {
+        //Check if the Log File for the Channel(s) Exists if not create it
+        if _, err := os.Stat(CreateFile + ".log"); os.IsNotExist(err) {
+                fmt.Printf("Log File " + CreateFile + ".log Doesn't Exist. Creating Log File.")
+                os.Create( CreateFile + ".log")
+                fmt.Printf("Log File " + CreateFile + ".log Created.")
+        } else {
+                fmt.Printf("Log File Exists.")
+        }
 }
 
 // UrlTitle attempts to extract the title of the page that a
@@ -118,6 +141,7 @@ func ChannelLogger(Log string, UserNick string, message string) {
 // AddCallbacks is a single function that does what it says.
 // It's merely a way of decluttering the main function.
 func AddCallbacks(conn *irc.Connection, config *Config) {
+	location := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year()) //didn't know for sure where to put it
 	conn.AddCallback("001", func(e *irc.Event) {
 		conn.Join(config.Channel)
 	})
@@ -127,7 +151,9 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			fmt.Printf("Joined\n")
 		}
 		message := " has joined"
-		ChannelLogger(config.LogDir + e.Arguments[0], e.Nick, message)
+		LogDir(config.LogDir)
+		LogFile(config.LogDir + location) //although not convetionally-wise, this may save asses.
+		ChannelLogger(config.LogDir + location, e.Nick, message)
 	})
 
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
@@ -147,7 +173,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			conn.Privmsg(config.Channel, response)
 		}
 		if len(message) > 0 {
-			ChannelLogger(config.LogDir + e.Arguments[0], e.Nick + ": ", message)
+			ChannelLogger(config.LogDir + location, e.Nick + ": ", message)
 			//This parses only messages when only someone talks
 			//It does not parse events, nor other.events()
 		}

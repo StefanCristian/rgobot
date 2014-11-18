@@ -1,7 +1,7 @@
 {
 	"Server": "irc.freenode.net:6667",
-	"Channel": "#rogentos-dezvoltare",
-	"BotUser": "NoxBot1",
-	"BotNick": "NoxBot1",
-	"LogDir": "/tmp/gobot/"
+	"Channel": "#rogentos-ro",
+	"BotUser": "NoxBot2",
+	"BotNick": "NoxBot2",
+	"LogDir": "/tmp/rgobot/"
 }
