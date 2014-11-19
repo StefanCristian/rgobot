@@ -121,10 +121,11 @@ func UrlTitle(msg string) string {
 	return newMsg
 }
 
-func ChannelLogger(Log string, UserNick string, message string) {
+func ChannelLogger(UserNick string, message string, LogDir string) {
 	STime := time.Now().Format(time.ANSIC)
+	logLoc := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
 
-	f, err := os.OpenFile(Log + ".log", os.O_CREATE|os.O_RDWR|os.O_APPEND|os.O_SYNC, 0666)
+	f, err := os.OpenFile(LogDir + logLoc + ".log", os.O_CREATE|os.O_RDWR|os.O_APPEND|os.O_SYNC, 0666)
 	if err != nil {
 		fmt.Println(f, err)
 	}
@@ -150,13 +151,10 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			LogFile(config.LogDir+dateLog)
 		}
 		message := " has joined"
-		dateLog := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
-		ChannelLogger(config.LogDir + dateLog, e.Nick, message)
+		ChannelLogger(e.Nick, message, config.LogDir)
 	})
 
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
-		dateLog := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
-		fmt.Println(dateLog)
 		var response string
 		message := e.Message()
 
@@ -172,7 +170,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		if len(response) > 0 {
 			conn.Privmsg(config.Channel, response)
 		}
-		ChannelLogger(config.LogDir + dateLog, e.Nick + ": ", message)
+		ChannelLogger(e.Nick + ": ", message, config.LogDir)
 	})
 }
 
