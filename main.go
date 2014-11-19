@@ -26,7 +26,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	//"github.com/darthlukan/cakeday"
 	"github.com/thoj/go-ircevent"
 	"time"
 	"io"
@@ -35,7 +34,6 @@ import (
 	"os"
 	"regexp"
 	"strings"
-	// "strconv"
 )
 
 type Config struct {
