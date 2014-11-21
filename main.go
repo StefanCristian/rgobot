@@ -145,7 +145,6 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 	})
 	conn.AddCallback("JOIN", func(e *irc.Event) {
 		if e.Nick == config.BotNick {
-			fmt.Printf("Joined\n")
 			dateLog := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
 			LogDir(config.LogDir)
 			LogFile(config.LogDir+dateLog)
