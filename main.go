@@ -171,6 +171,12 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		}
 		ChannelLogger(config.LogDir, e.Nick + ": ", message)
 	})
+	/* conn.AddCallback("ACTION", func (e *irc.Event) {
+		message := e.Message()
+
+		fmt.Println(message)
+		ChannelLogger(config.LogDir, e.Nick + ": ", message)
+	}) */ // not working for the moment
 }
 
 // Connect tries up to three times to get a connection to the server
