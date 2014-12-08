@@ -8,7 +8,7 @@ GoBot
 
 ## Installation
 ```
-    $ go get github.com/blacknoxis/gobot
+    $ go get github.com/blacknoxis/rgobot
 ```
 > Or:
 
