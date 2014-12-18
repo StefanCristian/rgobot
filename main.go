@@ -169,7 +169,14 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		if len(response) > 0 {
 			conn.Privmsg(config.Channel, response)
 		}
-		ChannelLogger(config.LogDir, e.Nick + ": ", message)
+		if len(message) > 0 {
+			if e.Arguments[0] != config.BotNick {
+				ChannelLogger(config.LogDir, e.Nick + ": ", message)
+			} else {
+				fmt.Printf("someone is trying to speak to the bot\n")
+			}
+
+		}
 	})
 	/* conn.AddCallback("ACTION", func (e *irc.Event) {
 		message := e.Message()
