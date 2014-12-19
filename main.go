@@ -153,6 +153,18 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		ChannelLogger(config.LogDir, e.Nick, message)
 	})
 
+        conn.AddCallback("PART", func (e *irc.Event) {
+                pmessage := " parted"
+                message := e.Message()
+                ChannelLogger(config.LogDir, e.Nick + "@" + e.Host, pmessage +" "+ "("+message+")")
+        })
+
+        conn.AddCallback("QUIT", func (e *irc.Event) {
+                qmessage := " has quit"
+                message := e.Message()
+                ChannelLogger(config.LogDir, e.Nick + "@" + e.Host, qmessage+" "+ "("+message+")")
+        })
+
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
 		var response string
 		message := e.Message()
@@ -173,17 +185,12 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			if e.Arguments[0] != config.BotNick {
 				ChannelLogger(config.LogDir, e.Nick + ": ", message)
 			} else {
-				fmt.Printf("someone is trying to speak to the bot\n")
+				// Someone is trying to speak to the bot
+				conn.Privmsg(e.Nick, "There is no function implemente for private messages")
 			}
 
 		}
 	})
-	/* conn.AddCallback("ACTION", func (e *irc.Event) {
-		message := e.Message()
-
-		fmt.Println(message)
-		ChannelLogger(config.LogDir, e.Nick + ": ", message)
-	}) */ // not working for the moment
 }
 
 // Connect tries up to three times to get a connection to the server
