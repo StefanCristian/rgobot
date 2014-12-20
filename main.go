@@ -191,7 +191,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		}
 		if len(message) > 0 {
 			if e.Arguments[0] != config.BotNick {
-				ChannelLogger(config.LogDir, e.Nick + ": ", message)
+				ChannelLogger(config.LogDir, e.Nick + ":"+" ", message)
 			} else {
 				// Someone is trying to speak to the bot
 				conn.Privmsg(e.Nick, "There is no function implemented for private messages")
