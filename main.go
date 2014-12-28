@@ -154,17 +154,21 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 	})
 
         conn.AddCallback("PART", func (e *irc.Event) {
-                pmessage := "parted"
-                message := e.Message()
+		pmessage := " parted "
+		message := e.Message()
 		spaceAround := "@"
-                ChannelLogger(config.LogDir, fmt.Sprintf("%v %v %v", e.Nick, spaceAround, e.Host), pmessage +" "+ "("+message+")")
+		spaceAccoladeOne := "( "
+		spaceAccoladeZwei := " )"
+                ChannelLogger(config.LogDir, fmt.Sprintf("%v%v%v", e.Nick, spaceAround, e.Host), fmt.Sprintf("%v%v%v%v", pmessage, spaceAccoladeOne, message, spaceAccoladeZwei))
         })
 
         conn.AddCallback("QUIT", func (e *irc.Event) {
-                qmessage := " has quit"
+                qmessage := " has quit "
                 message := e.Message()
 		spaceAround := "@"
-                ChannelLogger(config.LogDir, fmt.Sprintf("%v %v %v", e.Nick, spaceAround, e.Host), qmessage+" "+ "("+message+")")
+		spaceAccoladeOne := "( "
+		spaceAccoladeZwei := " )"
+                ChannelLogger(config.LogDir, fmt.Sprintf("%v%v%v", e.Nick, spaceAround, e.Host), fmt.Sprintf("%v%v%v%v", qmessage, spaceAccoladeOne, message, spaceAccoladeZwei))
         })
 
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
