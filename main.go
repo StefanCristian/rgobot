@@ -149,14 +149,15 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			LogDir(config.LogDir)
 			LogFile(config.LogDir+dateLog)
 		}
-		message := " has joined"
+		spaceZero := " "
+		message := spaceZero + "has joined"
 		ChannelLogger(config.LogDir, e.Nick, message)
 	})
 
         conn.AddCallback("PART", func (e *irc.Event) {
-		pmessage := " parted "
-		message := e.Message()
 		spaceZero := " "
+		pmessage := spaceZero + "parted" + spaceZero
+		message := e.Message()
 		spaceAround := "@"
 		spaceAccoladeOne := "(" + spaceZero
 		spaceAccoladeZwei := spaceZero + ")"
@@ -164,9 +165,9 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
         })
 
         conn.AddCallback("QUIT", func (e *irc.Event) {
-                qmessage := " has quit "
-                message := e.Message()
 		spaceZero := " "
+                qmessage := spaceZero + "has quit" + spaceZero
+                message := e.Message()
 		spaceAround := "@"
 		spaceAccoladeOne := "(" + spaceZero
 		spaceAccoladeZwei := spaceZero + ")"
