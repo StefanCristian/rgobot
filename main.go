@@ -137,6 +137,23 @@ func ChannelLogger(LogDir string, UserNick string, message string) {
 	f.Close()
 }
 
+func ChannelLoggz(LogDir string, UserNick string, message string) {
+        STime := time.Now().Format(time.ANSIC)
+        logLoc := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
+
+        f, err := os.OpenFile(LogDir + logLoc + ".log", os.O_CREATE|os.O_RDWR|os.O_APPEND|os.O_SYNC, 0666)
+        if err != nil {
+                fmt.Println(f, err)
+        }
+
+        n, err := io.WriteString(f, STime + " > " + UserNick + message + "\n")
+        if err != nil {
+                fmt.Println(n, err)
+        }
+        f.Close()
+}
+
+
 // AddCallbacks is a single function that does what it says.
 // It's merely a way of decluttering the main function.
 func AddCallbacks(conn *irc.Connection, config *Config) {
@@ -176,6 +193,8 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
 		var response string
+		var rsgArray  []string
+		var mrsgArray []string
 		message := e.Message()
 
 		if e.Host == "unaffiliated/blacknoxis" && strings.Contains(message, "#meriacas") && strings.Index(message, "#meriacas") == 0 {
@@ -211,6 +230,14 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 				conn.Privmsg(e.Nick, "There is no function implemented for private messages")
 			}
 
+		}
+		if strings.Contains(message, "#memo:") {
+		spacePoint := "-"
+		rsgArray = strings.SplitAfterN(message, ":", 2)
+			if len(rsgArray) > 0 {
+			   mrsgArray = strings.SplitN(rsgArray[1], " ", 2)
+			   ChannelLoggz(config.LogDir + "retineQ-",e.Nick, fmt.Sprintf("%v %v ", spacePoint, mrsgArray))
+			}
 		}
 	})
 }
