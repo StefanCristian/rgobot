@@ -28,13 +28,14 @@ import (
 	"fmt"
 	"github.com/thoj/go-ircevent"
 	"time"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
 )
+
+const delay = 40
 
 type Config struct {
 	Server, Channel, BotUser, BotNick, LogDir string
@@ -54,28 +55,6 @@ func ParseCmds(cmdMsg string) string {
 	//     "!slap $USER"
 	msg := fmt.Sprintf("\x01"+"ACTION %v %v, FOR SCIENCE!\x01", cmd, msgArray[1])
 	return msg
-}
-// Creates Log Directory
-func LogDir(CreateDir string) {
-
-        //Check if the LogDir Exists. And if not Create it.
-        if _, err := os.Stat(CreateDir); os.IsNotExist(err) {
-                fmt.Printf("No such file or directory: %s", CreateDir)
-                os.Mkdir(CreateDir, 0777)
-        } else {
-                fmt.Printf("Its There: %s", CreateDir)
-        }
-}
-
-func LogFile(CreateFile string) {
-        //Check if the Log File for the Channel(s) Exists if not create it
-        if _, err := os.Stat(CreateFile + ".log"); os.IsNotExist(err) {
-                fmt.Printf("Log File " + CreateFile + ".log Doesn't Exist.\n")
-		os.Create(CreateFile + ".log")
-		fmt.Printf("Created the log file\n")
-        } else {
-                fmt.Printf("Log File Exists.\n")
-        }
 }
 
 // UrlTitle attempts to extract the title of the page that a
@@ -121,39 +100,6 @@ func UrlTitle(msg string) string {
 	return newMsg
 }
 
-func ChannelLogger(LogDir string, UserNick string, message string) {
-	STime := time.Now().Format(time.ANSIC)
-	logLoc := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
-
-	f, err := os.OpenFile(LogDir + logLoc + ".log", os.O_CREATE|os.O_RDWR|os.O_APPEND|os.O_SYNC, 0666)
-	if err != nil {
-		fmt.Println(f, err)
-	}
-
-	n, err := io.WriteString(f, STime + " > " + UserNick + message + "\n")
-	if err != nil {
-		fmt.Println(n, err)
-	}
-	f.Close()
-}
-
-func ChannelLoggz(LogDir string, UserNick string, message string) {
-        STime := time.Now().Format(time.ANSIC)
-        logLoc := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
-
-        f, err := os.OpenFile(LogDir + logLoc + ".log", os.O_CREATE|os.O_RDWR|os.O_APPEND|os.O_SYNC, 0666)
-        if err != nil {
-                fmt.Println(f, err)
-        }
-
-        n, err := io.WriteString(f, STime + " > " + UserNick + message + "\n")
-        if err != nil {
-                fmt.Println(n, err)
-        }
-        f.Close()
-}
-
-
 // AddCallbacks is a single function that does what it says.
 // It's merely a way of decluttering the main function.
 func AddCallbacks(conn *irc.Connection, config *Config) {
@@ -168,7 +114,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		}
 		spaceZero := " "
 		message := spaceZero + "has joined"
-		ChannelLogger(config.LogDir, e.Nick, message)
+		go ChannelLogger(config.LogDir, e.Nick, message)
 	})
 
         conn.AddCallback("PART", func (e *irc.Event) {
@@ -178,7 +124,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		spaceAround := "@"
 		spaceAccoladeOne := "(" + spaceZero
 		spaceAccoladeZwei := spaceZero + ")"
-                ChannelLogger(config.LogDir, fmt.Sprintf("%v%v%v", e.Nick, spaceAround, e.Host), fmt.Sprintf("%v%v%v%v", pmessage, spaceAccoladeOne, message, spaceAccoladeZwei))
+                go ChannelLogger(config.LogDir, fmt.Sprintf("%v%v%v", e.Nick, spaceAround, e.Host), fmt.Sprintf("%v%v%v%v", pmessage, spaceAccoladeOne, message, spaceAccoladeZwei))
         })
 
         conn.AddCallback("QUIT", func (e *irc.Event) {
@@ -188,7 +134,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		spaceAround := "@"
 		spaceAccoladeOne := "(" + spaceZero
 		spaceAccoladeZwei := spaceZero + ")"
-                ChannelLogger(config.LogDir, fmt.Sprintf("%v%v%v", e.Nick, spaceAround, e.Host), fmt.Sprintf("%v%v%v%v", qmessage, spaceAccoladeOne, message, spaceAccoladeZwei))
+                go ChannelLogger(config.LogDir, fmt.Sprintf("%v%v%v", e.Nick, spaceAround, e.Host), fmt.Sprintf("%v%v%v%v", qmessage, spaceAccoladeOne, message, spaceAccoladeZwei))
         })
 
 	conn.AddCallback("PRIVMSG", func(e *irc.Event) {
@@ -224,21 +170,29 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		if len(message) > 0 {
 			if e.Arguments[0] != config.BotNick {
 				spacePoint := ":"
-				ChannelLogger(config.LogDir, e.Nick, fmt.Sprintf("%v %v", spacePoint, message))
+				go ChannelLogger(config.LogDir, e.Nick, fmt.Sprintf("%v %v", spacePoint, message))
 			} else {
 				// Someone is trying to speak to the bot
 				conn.Privmsg(e.Nick, "There is no function implemented for private messages")
 			}
 
 		}
-		if strings.Contains(message, "#memo:") {
+		if strings.Contains(message, "#ia ba, retine asta:") {
 		spacePoint := "-"
 		rsgArray = strings.SplitAfterN(message, ":", 2)
 			if len(rsgArray) > 0 {
-			   mrsgArray = strings.SplitN(rsgArray[1], " ", 2)
-			   ChannelLoggz(config.LogDir + "retineQ-",e.Nick, fmt.Sprintf("%v %v ", spacePoint, mrsgArray))
+				mrsgArray = strings.SplitN(rsgArray[1], " ", 2)
+				go ChannelLoggz(config.LogDir + "retineQ-",e.Nick, fmt.Sprintf("%v %v" + " ", spacePoint, mrsgArray))
 			}
+			/* if len(mrsgArray) > 1 {
+				go ChannelLogger(config.LogDir + "useful",e.Nick, fmt.Sprintf("%v %v", spacePoint, mrsgArray))
+			} */
 		}
+	})
+
+	conn.AddCallback("ACTION", func (e *irc.Event) {
+		message := e.Message()
+		go ChannelLogger(config.LogDir, e.Nick, message + e.Arguments[0] + e.Arguments[1])
 	})
 }
 
@@ -249,6 +203,7 @@ func Connect(conn *irc.Connection, config *Config) error {
 	var err error
 
 	for attempt := 1; attempt <= 3; attempt++ {
+		time.Sleep(delay * time.Second)
 		if err = conn.Connect(config.Server); err != nil {
 			fmt.Println("Connection attempt %v failed, trying again...", attempt)
 			continue
