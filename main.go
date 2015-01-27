@@ -177,7 +177,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			}
 
 		}
-		if strings.Contains(message, "#ia ba, retine asta:") {
+		if strings.Contains(message, "#memo:") {
 		spacePoint := "-"
 		rsgArray = strings.SplitAfterN(message, ":", 2)
 			if len(rsgArray) > 0 {
