@@ -164,6 +164,10 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			conn.Privmsg(config.Channel, "http://bpr.bluepink.ro/~rogentos/logs")
 		}
 
+                if strings.Contains(message, "#memos") {
+			conn.Privmsg(config.Channel, "http://bpr.bluepink.ro/~rogentos/logs/rogentos-dezvoltare/memos")
+		}
+
 		if len(response) > 0 {
 			conn.Privmsg(config.Channel, response)
 		}
