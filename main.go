@@ -187,6 +187,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			if len(rsgArray) > 0 {
 				mrsgArray = strings.SplitN(rsgArray[1], " ", 2)
 				go ChannelLoggz(config.LogDir + "retineQ-",e.Nick, fmt.Sprintf("%v %v" + " ", spacePoint, mrsgArray))
+				config.Privmsg(e.Nick, "memo-ed")
 			}
 			/* if len(mrsgArray) > 1 {
 				go ChannelLogger(config.LogDir + "useful",e.Nick, fmt.Sprintf("%v %v", spacePoint, mrsgArray))
