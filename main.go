@@ -144,13 +144,8 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		message := e.Message()
 
 		if e.Host == "unaffiliated/blacknoxis" && strings.Contains(message, "#meriacas") && strings.Index(message, "#meriacas") == 0 {
-			// This is intentionally borken. Further functions will follow
-			response = ParseCmds(message)
+		os.Exit(0)
 		}
-
-		/* if strings.Contains(e.Message, "http") || strings.Contains(e.Message, "www") {
-			response = UrlTitle(e.Message)
-		} */
 
 		if strings.Contains(message, "#sursa") || strings.Contains(message, "#surse") || strings.Contains(message, "#sources") {
 			conn.Privmsg(config.Channel, "http://github.com/BlackNoxis http://github.com/Rogentos")
@@ -179,7 +174,6 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 				// Someone is trying to speak to the bot
 				conn.Privmsg(e.Nick, "There is no function implemented for private messages")
 			}
-
 		}
 		if strings.Contains(message, "#memo:") {
 		spacePoint := "-"
