@@ -180,7 +180,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		rsgArray = strings.SplitAfterN(message, ":", 2)
 			if len(rsgArray) > 0 {
 				mrsgArray = strings.SplitN(rsgArray[1], " ", 2)
-				go ChannelLoggz(config.LogDir + "retineQ-",e.Nick, fmt.Sprintf("%v %v" + " ", spacePoint, mrsgArray))
+				go ChannelLogger(config.LogDir + "retineQ-",e.Nick, fmt.Sprintf("%v %v" + " ", spacePoint, mrsgArray))
 				conn.Privmsg(e.Nick, "memo-ed")
 			}
 		}

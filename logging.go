@@ -24,22 +24,6 @@ func ChannelLogger(LogDir string, UserNick string, message string) {
         f.Close()
 }
 
-func ChannelLoggz(LogDir string, UserNick string, message string) {
-        STime := time.Now().Format(time.ANSIC)
-        logLoc := fmt.Sprintf("%d-%s-%d", time.Now().Day(), time.Now().Month(), time.Now().Year())
-
-        f, err := os.OpenFile(LogDir + logLoc + ".log", os.O_CREATE|os.O_RDWR|os.O_APPEND|os.O_SYNC, 0666)
-        if err != nil {
-                fmt.Println(f, err)
-        }
-
-        n, err := io.WriteString(f, STime + " > " + UserNick + message + "\n")
-        if err != nil {
-                fmt.Println(n, err)
-        }
-        f.Close()
-}
-
 func LogDir(CreateDir string) {
 
         //Check if the LogDir Exists. And if not Create it.
