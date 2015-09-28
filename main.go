@@ -148,7 +148,7 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 		}
 
 		if strings.Contains(message, "#sursa") || strings.Contains(message, "#surse") || strings.Contains(message, "#sources") {
-			conn.Privmsg(config.Channel, "http://github.com/BlackNoxis http://github.com/Rogentos")
+			conn.Privmsg(config.Channel, "https://github.com/StefanCristian https://gitlab.com/rogentos https://gitlab.com/kogaion https://gitlab.com/argent")
 		}
 
 		if strings.Contains(message, "#wiki") {
