@@ -163,6 +163,10 @@ func AddCallbacks(conn *irc.Connection, config *Config) {
 			conn.Privmsg(config.Channel, "http://bpr.bluepink.ro/~rogentos/logs/rogentos-dezvoltare/memos")
 		}
 
+		if strings.Contains(message, "#descarca") {
+			conn.Privmsg(config.Channel, "http://rogentos.ro/")
+		}
+
 		if len(response) > 0 {
 			conn.Privmsg(config.Channel, response)
 		}
